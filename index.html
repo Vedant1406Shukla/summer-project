@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoiceBridge - Translating Voice Chat App</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-theme">
+  
+  <!-- Main Application Container -->
+  <div class="app-container">
+    
+    <!-- SECTION 1: AUTH VIEW (LOGIN / SIGNUP) -->
+    <div id="view-auth" class="view-panel">
+      <div class="auth-card-container">
+        
+        <div class="auth-brand">
+          <i class="fa-solid fa-microphone-lines brand-icon"></i>
+          <h1>VoiceBridge</h1>
+          <p>Secure Translating Chat Room</p>
+        </div>
+
+        <!-- Login Card -->
+        <div id="card-login" class="auth-card">
+          <h2>Welcome Back</h2>
+          <p class="auth-subtitle">Log in to enter chat rooms</p>
+          
+          <div class="form-group">
+            <label for="login-username"><i class="fa-solid fa-user"></i> Username</label>
+            <input type="text" id="login-username" placeholder="Enter your username" autocomplete="off">
+          </div>
+          
+          <div class="form-group">
+            <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password">
+          </div>
+          
+          <div class="alert-box error hidden" id="login-error"></div>
+          
+          <button class="btn btn-primary btn-full" id="btn-login-submit">
+            <span>Login</span> <i class="fa-solid fa-right-to-bracket"></i>
+          </button>
+          
+          <div class="auth-toggle">
+            <span>New to VoiceBridge?</span> <a href="#" id="link-show-signup">Create Account</a>
+          </div>
+        </div>
+
+        <!-- Sign Up Card -->
+        <div id="card-signup" class="auth-card hidden">
+          <h2>Create Account</h2>
+          <p class="auth-subtitle">Set up your profile to translate messages</p>
+          
+          <div class="form-group">
+            <label for="signup-username"><i class="fa-solid fa-user"></i> Choose Username</label>
+            <input type="text" id="signup-username" placeholder="e.g. Alice" autocomplete="off">
+          </div>
+          
+          <div class="form-group">
+            <label for="signup-password"><i class="fa-solid fa-lock"></i> Password</label>
+            <input type="password" id="signup-password" placeholder="Choose a secure password">
+          </div>
+
+          <div class="form-group">
+            <label for="signup-lang"><i class="fa-solid fa-language"></i> Preferred Language</label>
+            <div class="select-wrapper">
+              <select id="signup-lang">
+                <option value="en-US">English (US)</option>
+                <option value="es-ES">Spanish (Spain)</option>
+                <option value="fr-FR">French (France)</option>
+                <option value="ja-JP">Japanese (Japan)</option>
+                <option value="de-DE">German (Germany)</option>
+                <option value="hi-IN">Hindi (India)</option>
+              </select>
+            </div>
+            <span class="helper-note">Other users will see your messages translated to their preferred language (requires pipeline integration).</span>
+          </div>
+          
+          <div class="alert-box error hidden" id="signup-error"></div>
+          
+          <button class="btn btn-primary btn-full" id="btn-signup-submit">
+            <span>Create Account</span> <i class="fa-solid fa-user-plus"></i>
+          </button>
+          
+          <div class="auth-toggle">
+            <span>Already have an account?</span> <a href="#" id="link-show-login">Log In</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION 2: ROOM ENTRY VIEW -->
+    <div id="view-room" class="view-panel hidden">
+      <div class="room-card-container">
+        
+        <div class="user-greeting-card">
+          <div class="user-greeting-avatar" id="user-avatar-initials">U</div>
+          <div class="user-greeting-text">
+            <h3>Hello, <span id="user-display-name">User</span></h3>
+            <span class="user-lang-badge"><i class="fa-solid fa-globe"></i> Comfort Language: <strong id="user-display-lang">English</strong></span>
+          </div>
+          <button class="btn-logout" id="btn-logout" title="Log Out"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+
+        <div class="room-card">
+          <h2>Translate Room Console</h2>
+          <p class="room-subtitle">Enter an ID and Password to create or join a chat room</p>
+
+          <div class="form-group">
+            <label for="room-id"><i class="fa-solid fa-hashtag"></i> Room ID</label>
+            <input type="text" id="room-id" placeholder="e.g. ROOM-7F3K" autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label for="room-password"><i class="fa-solid fa-key"></i> Room Password</label>
+            <input type="password" id="room-password" placeholder="Room password credentials">
+          </div>
+
+          <div class="alert-box error hidden" id="room-error"></div>
+
+          <div class="room-action-buttons">
+            <button class="btn btn-secondary flex-grow" id="btn-join-room">
+              <i class="fa-solid fa-right-to-bracket"></i> Join Room
+            </button>
+            <button class="btn btn-primary flex-grow" id="btn-create-room">
+              <i class="fa-solid fa-plus"></i> Create Room
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION 3: CHAT VIEW -->
+    <div id="view-chat" class="view-panel hidden">
+      
+      <!-- Top Header -->
+      <header class="chat-header">
+        <div class="chat-header-left">
+          <div class="room-avatar"><i class="fa-solid fa-comments"></i></div>
+          <div class="room-info">
+            <span class="room-name" id="chat-display-room-id">ROOM-7F3K</span>
+            <span class="room-status"><i class="fa-solid fa-circle"></i> Connected Tab Session</span>
+          </div>
+        </div>
+
+        <div class="chat-header-center">
+          <div class="brand-mini">
+            <i class="fa-solid fa-microphone-lines"></i>
+            <span>VoiceBridge</span>
+          </div>
+        </div>
+
+        <div class="chat-header-right">
+          <div class="current-user-tag">
+            <span class="tag-name" id="chat-display-username">Username</span>
+            <span class="tag-lang" id="chat-display-lang">English</span>
+          </div>
+          <button class="btn btn-danger btn-mini" id="btn-leave-room">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Leave</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Message viewport -->
+      <section class="chat-viewport" id="chat-viewport">
+        <!-- Messages will be populated here dynamically -->
+      </section>
+
+      <!-- Recording progress indicator overlay -->
+      <div class="recording-status-banner hidden" id="rec-status-banner">
+        <div class="rec-banner-content">
+          <div class="rec-pulse-circle"></div>
+          <span id="rec-status-text">Recording Audio Message...</span>
+          <span class="rec-timer" id="rec-timer">0:00</span>
+        </div>
+      </div>
+
+      <!-- Footer Control Panel -->
+      <footer class="chat-control-footer">
+        
+        <!-- Audio record deck (Left/Center wrapper) -->
+        <div class="audio-control-deck">
+          <button class="btn-audio-record" id="btn-record-audio" aria-label="Record Voice">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <div class="audio-deck-text">
+            <span class="audio-deck-title" id="audio-deck-title">Tap to Record</span>
+            <span class="audio-deck-desc" id="audio-deck-desc">Click to speak a voice message</span>
+          </div>
+        </div>
+
+        <!-- Chat message entry block (Right) -->
+        <div class="chat-message-deck">
+          <input type="text" id="chat-message-input" placeholder="Type a message here..." autocomplete="off">
+          <button class="btn-send-message" id="btn-send-message" aria-label="Send Message">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+
+      </footer>
+
+    </div>
+
+  </div>
+
+  <!-- Audio playback element -->
+  <audio id="chat-audio-player" style="display:none;"></audio>
+  
+  <!-- JavaScript controller -->
+  <script src="app.js"></script>
+</body>
+</html>
